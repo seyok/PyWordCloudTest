@@ -4,10 +4,11 @@ import sys
 import jieba
 import jieba.analyse
 import operator
+import pandas as pd
 from collections import Counter
 
-filename = r"C:\Users\ojdf\Downloads\红楼梦.txt"
-#filename = r"C:\Users\ojdf\Downloads\哈利波特.txt"
+#filename = r"C:\Users\ojdf\Downloads\红楼梦.txt"
+filename = r"C:\Users\ojdf\Downloads\哈利波特.txt"
 
 def fenci(file_name):
     f = open(file_name, 'r+',encoding='utf-8')
@@ -25,6 +26,12 @@ def fenci(file_name):
                 tf[seg] = 1
 
     #tf = sorted(tf.items(), key = operator.itemgetter(1), reverse = True)
+
+    arr = list(tf.items())
+    df = pd.DataFrame(list(tf.items()), columns=['word', 'counts'])
+    df = df[df.word.len()>1]
+    df = df.sort_index(by='counts', ascending = False)
+    print(df)
 
     f = open("result.txt", "w+")
     for item in tf:

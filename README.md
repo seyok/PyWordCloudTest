@@ -1,3 +1,4 @@
 # PyWordCloudTest
 jieba
 wordcloud
+pandas
