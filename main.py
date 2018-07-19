@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import jieba
 import jieba.analyse
-import operator
 import pandas as pd
-from collections import Counter
+from wordcloud import WordCloud
 
-#filename = r"C:\Users\ojdf\Downloads\红楼梦.txt"
-filename = r"C:\Users\ojdf\Downloads\哈利波特.txt"
+
+files = ["红楼梦.txt", "哈利波特.txt", "水浒传.txt", "西游记.txt", "三国演义.txt"]
+
 
 def fenci(file_name):
-    f = open(file_name, 'r+',encoding='utf-8')
+    f = open(file_name, 'r+', encoding='utf-8')
     file_list = f.read()
     f.close()
 
@@ -19,24 +18,40 @@ def fenci(file_name):
     tf = {}
     for seg in seg_list:
         seg = ''.join(seg.split())
-        if (seg != '' and seg != "\n" and seg != "\n\n"):
+        if seg != "\n\n" and len(seg) > 1:
             if seg in tf:
                 tf[seg] += 1
             else:
                 tf[seg] = 1
 
-    #tf = sorted(tf.items(), key = operator.itemgetter(1), reverse = True)
-
-    arr = list(tf.items())
     df = pd.DataFrame(list(tf.items()), columns=['word', 'counts'])
-    df = df[df.word.len()>1]
-    df = df.sort_index(by='counts', ascending = False)
-    print(df)
+    df = df[df.counts > 100]
+    df = df.sort_values(by='counts', ascending=False)
+    # print(df)
 
-    f = open("result.txt", "w+")
-    for item in tf:
-        f.write(item + " " + str(tf[item]) + "\n")
-    f.close()
+    list_word = df['word'].tolist()
+    # print(list_word)
+    return list_word
 
 
-fenci(filename)
+def gen_word_cloud(num, word_list):
+    word_cloud = WordCloud(font_path="SourceHanSerifCN-Regular.otf",
+                           background_color="black", width=1920,
+                           height=1080, max_words=1500, min_font_size=4).generate(' '.join(word_list))
+    word_cloud.to_file(str(num) + '.png')
+
+
+def gen_word_cloud_file(num, file_name):
+    word_list = fenci(file_name)
+    gen_word_cloud(num, word_list)
+
+
+if __name__ == '__main__':
+    index = 1
+    for item in files:
+        gen_word_cloud_file(index, item)
+        index += 1
+    words = ["Row", "Column", "Index", "delete", "copy", "check", "list", "cell", "next", "all", "fill", "null"]
+    gen_word_cloud(index, words)
+    print("OK")
+
