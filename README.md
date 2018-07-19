@@ -1,0 +1,3 @@
+# PyWordCloudTest
+jieba
+wordcloud
